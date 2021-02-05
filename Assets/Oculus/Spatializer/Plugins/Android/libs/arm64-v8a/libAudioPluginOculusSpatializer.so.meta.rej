@@ -1,0 +1,8 @@
+diff a/Assets/Oculus/Spatializer/Plugins/Android/libs/arm64-v8a/libAudioPluginOculusSpatializer.so.meta b/Assets/Oculus/Spatializer/Plugins/Android/libs/arm64-v8a/libAudioPluginOculusSpatializer.so.meta	(rejected hunks)
+@@ -1,5 +1,5 @@
+ fileFormatVersion: 2
+-guid: a57801270cf689244b48012cf9db1713
++guid: 477534b2aa59778409c51171d5431f56
+ PluginImporter:
+   externalObjects: {}
+   serializedVersion: 2
