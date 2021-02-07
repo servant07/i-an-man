@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class GestureReferenceCreateScene : MonoBehaviour
 {
-    GestureData paperReference;
-    GestureData rockReference;
-    public CustomGesture customGesture;
+    BKU_GestureData paperReference;
+    BKU_GestureData rockReference;
+    public BKU_Gesture customGesture;
     public Text sceneText;
     // Start is called before the first frame update
     void Start()
@@ -27,8 +27,8 @@ public class GestureReferenceCreateScene : MonoBehaviour
 
         DataStream.Save(customGesture.gestureData, "rockReference");
         sceneText.text = "완료. 로드 테스트 진행.";
-        paperReference = DataStream.Load<GestureData>("paperReference");
-        rockReference = DataStream.Load<GestureData>("rockReference");
+        paperReference = DataStream.Load<BKU_GestureData>("paperReference");
+        rockReference = DataStream.Load<BKU_GestureData>("rockReference");
 
         string debugtext;
         debugtext = customGesture.UIText(paperReference.Distance);

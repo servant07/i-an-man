@@ -16,6 +16,6 @@ public class BKU_MeshRenderer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        meshRenderer.enabled = skeleton.IsDataValid  && skeleton.IsDataHighConfidence;
+       meshRenderer.enabled = skeleton.IsDataValid;
     }
 }

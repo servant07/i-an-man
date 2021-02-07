@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class GestureData
+public class BKU_GestureData
 {
     float[][] distance;
     float[] angle;
     public float[][] Distance { get => distance; set=> distance = value; }
     public float[] Angle { get => angle; set => angle = value; }
-    public GestureData(int distanceIndex, int angleIndex)
+    public BKU_GestureData(int distanceIndex, int angleIndex)
     {
         distance = new float[distanceIndex][];
         angle = new float[angleIndex];

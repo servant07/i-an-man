@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class BKU_TraceCapsules : MonoBehaviour
+class BKU_TraceCapsules : MonoBehaviour
 {
     public OVRSkeleton skeleton;
     BKU_TraceBones traceBones;

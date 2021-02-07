@@ -2,50 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BKU_TraceBones : MonoBehaviour
+class BKU_TraceBones : MonoBehaviour
 {
     public Transform[] myBones;
     OVRSkeleton skeleton;
-    SkinnedMeshRenderer skinnedMeshRenderer;
     int BonesCount;
-
-    Transform[] testBone;
-    bool isinit;
     // Start is called before the first frame update
-    IEnumerator Start()
+    void Start()
     {
         skeleton = GetComponentInParent<OVRSkeleton>();
-        skinnedMeshRenderer = GetComponentInParent<SkinnedMeshRenderer>();
         BonesCount = myBones.Length;
 
-
-        while (!skeleton.IsInitialized)
-        {
-            yield return null;
-        }
-     
-        isinit = true;
-            yield return null;
-
     }
-	
-	// Update is called once per frame
-	void FixedUpdate()
+
+    // Update is called once per frame
+    void FixedUpdate()
     {
-        if (isinit)
+        if (skeleton.IsInitialized)
         {
-            for (int i = 0; i < BonesCount; i++)
+            if (skeleton.IsDataValid && skeleton.IsDataHighConfidence)
             {
-      
-                Vector3 temp = skeleton.Bones[i].Transform.eulerAngles;
-           
-                 myBones[i].transform.eulerAngles = temp;
+                for (int i = 0; i < BonesCount; i++)
+                {
+                    Vector3 temp = skeleton.Bones[i].Transform.eulerAngles;
+                    myBones[i].transform.eulerAngles = temp;
+                }
+
             }
-  
-        }
-        else
-        {
 
         }
+
     }
 }
