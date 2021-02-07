@@ -44,12 +44,7 @@ enum ThumbTipGesture
     peace = 1 << BoneId.Hand_Middle3 | 1 << BoneId.Hand_Ring3,
     max = int.MaxValue
 }
-enum Hand
-{
-    Left=0,
-    Right,
-    Any
-}
+
 
 public class BKU_Gesture : MonoBehaviour
 {
@@ -63,17 +58,14 @@ public class BKU_Gesture : MonoBehaviour
     BoneData[] boneData;
     [SerializeField]
     OVRHand hand;
+
+    [HideInInspector]
+    public BKU_Gesture otherHandGesture;
+
     public OVRSkeleton skeleton;
 
-    OVRHand rightHand;
-    OVRHand leftHand;
-
-    OVRSkeleton rightSkeleton;
-    OVRSkeleton leftSkeleton;
-
-
-    BKU_GestureData rightPaperReference;
-    BKU_GestureData rightRockReference;
+    BKU_GestureData paperReference;
+    BKU_GestureData rockReference;
     [HideInInspector]
     public BKU_GestureData gestureData;
     int boneCount;
@@ -159,9 +151,9 @@ public class BKU_Gesture : MonoBehaviour
   
   
 
-
-        rightPaperReference = DataStream.Load<BKU_GestureData>("rightPaperReference");
-        rightRockReference = DataStream.Load<BKU_GestureData>("rightRockReference");
+        if(hand.Hand)
+        paperReference = DataStream.Load<BKU_GestureData>("rightPaperReference");
+        rockReference = DataStream.Load<BKU_GestureData>("rightRockReference");
         gestureData = new BKU_GestureData(boneCount - 1, (int)BoneId.Hand_End);
 
         for (int i = 0; i < boneCount - 1; i++)
