@@ -45,8 +45,13 @@ enum ThumbTipGesture
     max = int.MaxValue
 }
 
+public enum HandType
+{
+    Left,
+    Right
+}
 
-public class BKU_Gesture : MonoBehaviour
+public class BKU_GestureInput : MonoBehaviour
 {
     public struct BoneData
     {
@@ -54,29 +59,23 @@ public class BKU_Gesture : MonoBehaviour
         public float distance;
     }
 
-
-    BoneData[] boneData;
     [SerializeField]
-    OVRHand hand;
-
-    [HideInInspector]
-    public BKU_Gesture otherHandGesture;
-
-    public OVRSkeleton skeleton;
-
-    BKU_GestureData paperReference;
-    BKU_GestureData rockReference;
-    [HideInInspector]
-    public BKU_GestureData gestureData;
+    public HandType handType;
+    BoneData[] boneData;
+    BKU_GestureData PaperReference;
+    BKU_GestureData RockReference;
+    
     int boneCount;
     public Text debugText;
-    [HideInInspector]
-    public bool isInitialized;
 
 
+    public bool IsInitialized { get; private set; }
+    public OVRHand Hand { get; private set; }
+    public OVRSkeleton Skeleton { get; private set; }
+    public BKU_GestureInput OtherHandGesture { get; private set; }
     public GestureList GestureState { get; private set; }
+    public BKU_GestureData GestureData { get; private set; }
     public bool IsGrab { get; private set; }
-    public bool IsGrabReady { get; private set; }
     public float GrabStrength { get; private set; }
 
 
@@ -84,18 +83,34 @@ public class BKU_Gesture : MonoBehaviour
 
     private void Awake()
     {
+        if (handType == HandType.Left)
+        {
+            OtherHandGesture = GameObject.Find("Left_hand_BKU").GetComponent<BKU_GestureInput>();
+            PaperReference = DataStream.Load<BKU_GestureData>("leftPaperReference");
+            RockReference = DataStream.Load<BKU_GestureData>("leftRockReference");
+        }
 
+        else if(handType == HandType.Right)
+        {
+ 
+            OtherHandGesture = GameObject.Find("Right_hand_BKU").GetComponent<BKU_GestureInput>();
+            RockReference = DataStream.Load<BKU_GestureData>("rightRockReference");
+            PaperReference = DataStream.Load<BKU_GestureData>("rightPaperReference");
+
+        }
     }
     // Start is called before the first frame update
     IEnumerator Start()
     {
+        Hand = GetComponent<OVRHand>();
+        Skeleton = GetComponent<OVRSkeleton>();
 
         while (true)
         {
-            if (skeleton.IsInitialized)
+            if (Skeleton.IsInitialized)
             {
                 Initialize();
-                isInitialized = true;
+                IsInitialized = true;
                 yield break;
             }
             else
@@ -108,9 +123,9 @@ public class BKU_Gesture : MonoBehaviour
 
     void Update()
     {
-        if (isInitialized)
+        if (IsInitialized)
         {
-            if (hand.IsTracked && hand.IsDataHighConfidence)
+            if (Hand.IsTracked && Hand.IsDataHighConfidence)
             {
 
                 DataSettig();
@@ -120,11 +135,6 @@ public class BKU_Gesture : MonoBehaviour
                 if (IsGrab)
                 {
                     GestureState = GestureList.grab;
-                }
-                if (IsGrabReady)
-                {
-
-                    GestureState = GestureList.grabReady;
                 }
             }
             else
@@ -138,34 +148,15 @@ public class BKU_Gesture : MonoBehaviour
     {
         GestureState = GestureList.none;
         IsGrab = false;
-        IsGrabReady = false;
         GrabStrength = 0;
     }
 
     void Initialize()
     {
-
-        boneCount = skeleton.Bones.Count;
+        boneCount = Skeleton.Bones.Count;
+        GestureData = new BKU_GestureData(boneCount - 1, (int)BoneId.Hand_End);
         boneData = new BoneData[boneCount - 1];
-        gestureData.Distance = new float[boneCount - 1][];
-  
-  
-
-        if(hand.Hand)
-        paperReference = DataStream.Load<BKU_GestureData>("rightPaperReference");
-        rockReference = DataStream.Load<BKU_GestureData>("rightRockReference");
-        gestureData = new BKU_GestureData(boneCount - 1, (int)BoneId.Hand_End);
-
-        for (int i = 0; i < boneCount - 1; i++)
-        {
-            gestureData.Distance[i] = new float[i + 1];
-
-        }
-
-
-        isInitialized = true;
-
-
+        IsInitialized = true;
     }
     
 
@@ -174,14 +165,14 @@ public class BKU_Gesture : MonoBehaviour
     void DataSettig()
     {
         float[] pingerAngle = new float[(int)BoneId.Hand_End];
-        for (int i = 0; i < gestureData.Distance.Length; i++)
+        for (int i = 0; i < GestureData.Distance.Length; i++)
         {
-            for (int j = 0; j < gestureData.Distance[i].Length; j++)
+            for (int j = 0; j < GestureData.Distance[i].Length; j++)
 
             {
-                gestureData.Distance[i][j] = (skeleton.Bones[j].Transform.position - skeleton.Bones[i + 1].Transform.position).magnitude;
+                GestureData.Distance[i][j] = (Skeleton.Bones[j].Transform.position - Skeleton.Bones[i + 1].Transform.position).magnitude;
                 
-                gestureData.Distance[i][j] = gestureData.Distance[i][j];
+                GestureData.Distance[i][j] = GestureData.Distance[i][j];
 
             }
         }
@@ -193,11 +184,11 @@ public class BKU_Gesture : MonoBehaviour
             float dot;
             float sing;
 
-            my = skeleton.Bones[i].Transform.right;
+            my = Skeleton.Bones[i].Transform.right;
             if (i < (int)BoneId.Hand_MaxSkinnable)
             {
-                parent = skeleton.Bones[i].Transform.parent.right;
-                parent2 = skeleton.Bones[i].Transform.parent.up;
+                parent = Skeleton.Bones[i].Transform.parent.right;
+                parent2 = Skeleton.Bones[i].Transform.parent.up;
                 dot = Vector3.Dot(my, parent);
                 sing = Vector3.Dot(my, parent2) * -1;
                 pingerAngle[i] = Mathf.Acos(dot) * Mathf.Rad2Deg * Mathf.Sign(sing);
@@ -206,9 +197,9 @@ public class BKU_Gesture : MonoBehaviour
             }
             else
             {
-                pingerAngle[i] = PingerTipAngleRecursive(skeleton.Bones[i].Transform, ref pingerAngle);
+                pingerAngle[i] = PingerTipAngleRecursive(Skeleton.Bones[i].Transform, ref pingerAngle);
             }
-                gestureData.Angle[i] = pingerAngle[i];
+                GestureData.Angle[i] = pingerAngle[i];
         }
 
 
@@ -243,7 +234,7 @@ public class BKU_Gesture : MonoBehaviour
             min = temp;
         }
 
-        return gestureData.Distance[max - 1][min];
+        return GestureData.Distance[max - 1][min];
   
 
 
@@ -254,10 +245,10 @@ public class BKU_Gesture : MonoBehaviour
 
         BoneId basePoint = BoneId.Hand_ThumbTip;
         int index = (int)BoneId.Hand_Start;
-        Vector3 standard = skeleton.Bones[(int)basePoint].Transform.position;
+        Vector3 standard = Skeleton.Bones[(int)basePoint].Transform.position;
         BoneData[] result = new BoneData[boneCount];
 
-        foreach (var e in skeleton.BindPoses)
+        foreach (var e in Skeleton.BindPoses)
         {
 
             if (e.Id == basePoint)
@@ -281,26 +272,23 @@ public class BKU_Gesture : MonoBehaviour
     {
         float result = 0;
         bool isGrab = true;
-        bool isGrabReady = true;
         for (int i = (int)BoneId.Hand_ThumbTip; i < (int)BoneId.Hand_End; i++)
         {
-            float angle = gestureData.Angle[i];
-            float rockAngle = rightRockReference.Angle[i];
-            float paperAngle = rightPaperReference.Angle[i];
+            float angle = GestureData.Angle[i];
+            float rockAngle = RockReference.Angle[i];
+            float paperAngle = PaperReference.Angle[i];
 
             angle -= rockAngle;
             paperAngle -= rockAngle;
             float ratio = angle / paperAngle;
-            isGrab = isGrab & (ratio < 0.4f);
-            isGrabReady = isGrabReady & (0.4f<= ratio && ratio < 0.8f);
+            isGrab = isGrab & (ratio < 0.5f);
             result += ratio;
 
         }
         result /= 5;
-        IsGrab = isGrab;
-        IsGrabReady = isGrabReady ;
-        if(isGrab && isGrabReady && result>0)
-            GrabStrength = 1-result;
+        IsGrab = result < 0.4f & isGrab;
+        if (IsGrab  && result > 0)
+            GrabStrength = 1 - result;
         else
         {
             GrabStrength = 0;

@@ -6,9 +6,9 @@ using UnityEngine.UI;
 
 public class GestureReferenceCreateScene : MonoBehaviour
 {
-    BKU_GestureData paperReference;
-    BKU_GestureData rockReference;
-    public BKU_Gesture customGesture;
+
+    public BKU_GestureInput leftGesture;
+    public BKU_GestureInput RightGesture;
     public Text sceneText;
     // Start is called before the first frame update
     void Start()
@@ -20,24 +20,15 @@ public class GestureReferenceCreateScene : MonoBehaviour
     
         sceneText.text = "손바닥 펴고 스페이스";
         yield return new WaitForSeconds(3.0f);
-        DataStream.Save(customGesture.gestureData, "paperReference");
+        DataStream.Save(leftGesture.GestureData, "leftPaperReference");
+        DataStream.Save(RightGesture.GestureData, "rightPaperReference");
 
         sceneText.text = "주먹쥐고 스페이스";
         yield return new WaitForSeconds(3.0f);
 
-        DataStream.Save(customGesture.gestureData, "rockReference");
-        sceneText.text = "완료. 로드 테스트 진행.";
-        paperReference = DataStream.Load<BKU_GestureData>("paperReference");
-        rockReference = DataStream.Load<BKU_GestureData>("rockReference");
+        DataStream.Save(leftGesture.GestureData, "leftRockReference");
+        DataStream.Save(RightGesture.GestureData, "rightRockReference");
+        sceneText.text = "완료.";
 
-        string debugtext;
-        debugtext = customGesture.UIText(paperReference.Distance);
-        sceneText.text = debugtext;
     }
-
-    bool Detect()
-    {
-        return Input.GetKeyDown(KeyCode.Space);
-    }
-
 }

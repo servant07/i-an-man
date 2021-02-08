@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class BKU_GestureBase : MonoBehaviour
 {
-    
+    protected BKU_GestureInput gestureInput;
     void Start()
     {
         

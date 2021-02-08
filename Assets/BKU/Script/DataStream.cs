@@ -29,6 +29,7 @@ public static class DataStream
         }
         return result;
     }
+
     static void AddText(FileStream fs, string value)
     {
         byte[] info = new UTF8Encoding(true).GetBytes(value);
