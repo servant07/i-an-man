@@ -28,10 +28,11 @@ using BoneId = OVRSkeleton.BoneId;
      none = 0,
      grab,
      grabReady,
-     gun
+     gun,
+    point
 
 
- }
+}
 
 
 
@@ -64,7 +65,10 @@ public class BKU_GestureInput : MonoBehaviour
     BoneData[] boneData;
     BKU_GestureData PaperReference;
     BKU_GestureData RockReference;
-    
+
+    delegate void GestureChackDelegate();
+    GestureChackDelegate gestureChackDelegate;
+
     int boneCount;
     public Text debugText;
 
@@ -76,6 +80,7 @@ public class BKU_GestureInput : MonoBehaviour
     public GestureList GestureState { get; private set; }
     public BKU_GestureData GestureData { get; private set; }
     public bool IsGrab { get; private set; }
+    public bool IsPoint { get; private set; }
     public float GrabStrength { get; private set; }
 
 
@@ -98,6 +103,9 @@ public class BKU_GestureInput : MonoBehaviour
             PaperReference = DataStream.Load<BKU_GestureData>("rightPaperReference");
 
         }
+        gestureChackDelegate = null;
+        gestureChackDelegate += Grab;
+        gestureChackDelegate += Point;
     }
     // Start is called before the first frame update
     IEnumerator Start()
@@ -129,13 +137,9 @@ public class BKU_GestureInput : MonoBehaviour
             {
 
                 DataSettig();
-                Grab();
-
                 GestureState = GestureList.none;
-                if (IsGrab)
-                {
-                    GestureState = GestureList.grab;
-                }
+                gestureChackDelegate.Invoke();
+
             }
             else
             {
@@ -220,8 +224,6 @@ public class BKU_GestureInput : MonoBehaviour
             return PingerTipAngleRecursive(parent, ref pingerAngle, result + pingerAngle[(int)boneId]);
         }
     }
-
-
     float GetBoneDistance(BoneId start, BoneId end)
     {
         int min = (int)start;
@@ -268,6 +270,8 @@ public class BKU_GestureInput : MonoBehaviour
     }
     #region 제스쳐 하드코딩
 
+
+    //다음에 함수형으로 한번 바꿔보자.
     void Grab()
     {
         float result = 0;
@@ -288,10 +292,62 @@ public class BKU_GestureInput : MonoBehaviour
         result /= 5;
         IsGrab = result < 0.4f & isGrab;
         if (IsGrab  && result > 0)
+        {
             GrabStrength = 1 - result;
+            GestureState = GestureList.grab;
+        }
         else
         {
             GrabStrength = 0;
+        }
+
+    }
+    void Point()
+    {
+        float result = 0;
+        float threshold = 0;
+        bool isPoint = true;
+        for (int i = (int)BoneId.Hand_ThumbTip; i < (int)BoneId.Hand_End; i++)
+        {
+            float angle = GestureData.Angle[i];
+            float rockAngle = RockReference.Angle[i];
+            float paperAngle = PaperReference.Angle[i];
+            angle -= rockAngle;
+            paperAngle -= rockAngle;
+            float ratio = angle / paperAngle;
+
+
+            switch (i)
+            {
+                case (int)BoneId.Hand_ThumbTip:
+                    float thumbThreshold = 0.6f;
+                    isPoint = isPoint & (ratio < thumbThreshold);
+                    result += ratio;
+                    threshold += thumbThreshold;
+                    break;
+
+                case (int)BoneId.Hand_IndexTip:
+                    float indexThreshold = 0.8f;
+                    isPoint = isPoint & (indexThreshold < ratio);
+                    result += (1 - ratio);
+                    threshold += 1-indexThreshold;
+                    break;
+
+                default:
+                    float defaultThreshold = 0.3f;
+                    isPoint = isPoint & (ratio < defaultThreshold);
+                    result += ratio;
+                    threshold += defaultThreshold;
+                    break;
+            }
+
+        }
+        threshold = (threshold / 5);
+
+        IsPoint = isPoint;
+        if(IsPoint)
+        {
+            GestureState = GestureList.point;
         }
 
     }
