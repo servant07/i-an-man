@@ -1724,7 +1724,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc6546fb873cf0549aa24e322438b8e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  handType: 0
+  handType: 1
   debugText: {fileID: 0}
 --- !u!4 &6005915120767014234
 Transform:

@@ -232,7 +232,8 @@ public static class OVRInput
 		Touch                     = OVRPlugin.Controller.Touch,          ///< Combined Left/Right pair of Oculus Touch controllers.
 		Remote                    = OVRPlugin.Controller.Remote,         ///< Oculus Remote controller.
 		Gamepad                   = OVRPlugin.Controller.Gamepad,        ///< Xbox 360 or Xbox One gamepad on PC. Generic gamepad on Android.
-		Hands                     = OVRPlugin.Controller.Hands,          ///< Left Hand provided by hand-tracking.
+		Hands         
+			= OVRPlugin.Controller.Hands,          ///< Left Hand provided by hand-tracking.
 		LHand                     = OVRPlugin.Controller.LHand,          ///< Left Hand provided by hand-tracking.
 		RHand                     = OVRPlugin.Controller.RHand,          ///< Right Hand provided by hand-tracking.
 		Active                    = OVRPlugin.Controller.Active,         ///< Default controller. Represents the controller that most recently registered a button press from the user.

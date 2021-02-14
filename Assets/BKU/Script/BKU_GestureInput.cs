@@ -17,22 +17,9 @@ using UnityEngine.UI;
   * 
   * 손의 크기는 사람마다 다르기 때문에 체크 기준을 거리가 아니라 거리 비율로 해야함.
   * 
-  * 
-  * scriptableobject가 json이고, 기준 데이터를 저장해야 하기 때문에 데이터 json으로 파싱해 save, load하는 부분도 제작해야한다.
+
   * */
 using BoneId = OVRSkeleton.BoneId;
- public enum GestureList
- {
-
-     error = -1,
-     none = 0,
-     grab,
-     grabReady,
-     gun,
-    point
-
-
-}
 
 
 
@@ -54,6 +41,16 @@ public enum HandType
 
 public class BKU_GestureInput : MonoBehaviour
 {
+     public enum GestureList
+     {
+         error = -1,
+         none = 0,
+         grab,
+         grabReady,
+         gun,
+         point,
+    }
+
     public struct BoneData
     {
         public BoneId id;

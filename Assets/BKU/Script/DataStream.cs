@@ -13,7 +13,7 @@ public static class DataStream
         string dataPath = path + fileName;
         BinaryFormatter test = new BinaryFormatter();
 
-        using (FileStream fs = File.Open(dataPath, FileMode.OpenOrCreate))
+        using (FileStream fs = File.Open(dataPath, FileMode.Create))
         {
             test.Serialize(fs, data);
         }
@@ -21,11 +21,15 @@ public static class DataStream
     public static T Load<T>(string fileName)
     {
         string dataPath = path + fileName;
-        T result;
+        T result = default(T);
         BinaryFormatter test = new BinaryFormatter();
-        using (FileStream fs = File.Open(dataPath, FileMode.OpenOrCreate))
+        FileInfo fileInfo = new FileInfo(dataPath);
+        if (fileInfo.Exists)
         {
-            result = (T)test.Deserialize(fs);
+            using (FileStream fs = File.Open(dataPath, FileMode.Open))
+            {
+                result = (T)test.Deserialize(fs);
+            }
         }
         return result;
     }
