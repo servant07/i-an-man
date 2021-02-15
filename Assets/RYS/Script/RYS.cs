@@ -13,18 +13,15 @@ public class RYS : MonoBehaviour
 
     public GameObject target;
     public NavMeshAgent agent;
-
+    
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = 1.5f;
 
         agent.isStopped = true;
-
-        // transform.rotation = Quaternion.Euler(0, 90, 0);
-        // transform.eulerAngles = new Vector3(0, 90, 0);
+        
     }
-
     void Update()
     {
         if (agent.isStopped == false && RightHand.instance.frist_motion == false)
@@ -47,6 +44,7 @@ public class RYS : MonoBehaviour
             RightHand.instance.frist_motion = true;
 
             LobbySetting.instance.Controller_Texture_judgment = true;
+            LobbySetting.instance.neon.SetActive(true);
         }
     }
 }

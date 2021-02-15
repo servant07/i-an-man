@@ -29,6 +29,7 @@ public class RightHand : MonoBehaviour
         Idle,
         Grab
     }
+
     public State state;
 
     void Start()
@@ -48,12 +49,18 @@ public class RightHand : MonoBehaviour
                 //Idle_Aiming();
                 break;
         }
-        if (RYS.instance.agent.isStopped == true)
+
+        if(RYS.instance.agent.isStopped == true)
         {
             PlayerRotate();
         }
 
         GrabJudgment();
+
+        if(OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger) > 0)
+        {
+            print(OVRInput.Get(OVRInput.Axis1D.SecondaryIndexTrigger));
+        }
     }
     void PlayerRotate()
     {
@@ -99,11 +106,15 @@ public class RightHand : MonoBehaviour
                     if (OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, OVRInput.Controller.RTouch))
                     {
                         TriggerVibration(40, 1, 255, OVRInput.Controller.RTouch);
-
+                        
                         if (RYS.instance.agent.isStopped == true && frist_motion == false)
                         {
-                            RYS.instance.agent.isStopped = false; // 여기까지 실행
+                            RYS.instance.agent.isStopped = false; 
                         }
+                        
+                        LobbySetting.instance.tutorial_HandCanvas.enabled = false;
+                        LobbySetting.instance.tutorial_PlayerCanvas.enabled = false;
+                        LobbySetting.instance.tutorial_Canvas_judgment = true;
                     }
                 }
 

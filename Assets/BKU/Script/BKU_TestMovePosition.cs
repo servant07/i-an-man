@@ -9,10 +9,8 @@ public class BKU_TestMovePosition : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        
+        rigidbody = GetComponent<Rigidbody>();   
     }
-
 
     private void FixedUpdate()
     {
