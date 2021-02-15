@@ -15,15 +15,26 @@ public class LobbySetting : MonoBehaviour
     public Text main_Text, controller_Text;
 
     public GameObject TV_Controller, TV_HandTracking, ch_Controller_R, ch_Controller_L;
+    public GameObject neon;
 
     public Light Dr;
 
+    public Canvas tutorial_HandCanvas, tutorial_PlayerCanvas;
+    public bool tutorial_Canvas_judgment = false;
+
+
     float objectRotate_y;
+    float gameTime = 0;
 
     public bool Controller_Texture_judgment = false;
 
     void Start()
     {
+        neon.SetActive(false);
+
+        tutorial_HandCanvas.enabled = false;
+        tutorial_PlayerCanvas.enabled = false;
+
         //controller_Text.enabled = false;
     }
 
@@ -39,9 +50,7 @@ public class LobbySetting : MonoBehaviour
 
     private void Controller_Texture()
     {
-        
        // controller_Text.enabled = true;
-
     }
 
     void Rotate_Robby() 
@@ -55,7 +64,7 @@ public class LobbySetting : MonoBehaviour
     }
     void Tv_Texture()
     {
-        float gameTime = 0;
+ 
         gameTime += Time.deltaTime;
 
         if (gameTime < 4.8)
@@ -81,6 +90,13 @@ public class LobbySetting : MonoBehaviour
                 gameObject.GetComponent<AudioSource>().clip = Resources.Load("Please select a device") as AudioClip;
                 gameObject.GetComponent<AudioSource>().Play();
             }
+
+            if (tutorial_Canvas_judgment == false)
+            {
+                tutorial_HandCanvas.enabled = true;
+                tutorial_PlayerCanvas.enabled = true;
+            }
+
             Dr.enabled = false;
         }
     }
